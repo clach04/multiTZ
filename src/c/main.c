@@ -124,10 +124,15 @@ static void set_container_image(GBitmap **bmp_image, BitmapLayer *bmp_layer, con
 	GBitmap *old_image = *bmp_image;
 
 	*bmp_image = gbitmap_create_with_resource(resource_id);
-	GRect frame = (GRect) {
-		.origin = origin,
-		.size = (*bmp_image)->bounds.size
-	};
+    GRect bitmap_size_info = gbitmap_get_bounds(*bmp_image);
+    /*
+	struct GRect frame = GRect(
+		origin.x, origin.y,
+		(*bmp_image)->bounds.size.w, (*bmp_image)->bounds.size.h
+	);
+    */
+    //GRect frame = GRect(0, 1, 2, 3);// DEBUG!
+    GRect frame = GRect(origin.x, origin.y, bitmap_size_info.size.w,  bitmap_size_info.size.h);// DEBUG!
 	bitmap_layer_set_bitmap(bmp_layer, *bmp_image);
 	layer_set_frame(bitmap_layer_get_layer(bmp_layer), frame);
 
