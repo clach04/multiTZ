@@ -8,7 +8,7 @@
             "configurable"
         ],
         "displayName": "MultiTZ",
-        "enableMultiJS": false,
+        "enableMultiJS": true,
         "messageKeys": {
             "Local_Timezone_UTC_Offset": 0,
             "Timezone_1_Name": 1,
