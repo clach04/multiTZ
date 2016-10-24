@@ -90,11 +90,12 @@ const char *DAY_NAME_ENGLISH[] = {
 static int valueRead, valueWritten;
 
 #define SETTINGS_KEY 77
-	
+
+#define MAX_TZ_NAME_LEN 3
 typedef struct persist {
-	char tz_one_name[4];
+	char tz_one_name[MAX_TZ_NAME_LEN+1];
 	int tz_one_offset;
-	char tz_two_name[4];
+	char tz_two_name[MAX_TZ_NAME_LEN+1];
 	int tz_two_offset;
 	int local_offset;  // FIXME with Firmware 3/SDK3 this is nolonger needed
 	int hourlyVibe;  // FIXME remove, not exposed via confid
@@ -280,19 +281,18 @@ void in_received_handler(DictionaryIterator *received, void *context) {
 		settings.local_offset = atoi(local_offset_tuple->value->cstring);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found local offset: %d", settings.local_offset);
 		
-        // FIXME strncpy() needs EOS manually adding on max length
         // FIXME remove static length
-		strncpy(settings.tz_one_name, tz1name_tuple->value->cstring, 3);
+		strncpy(settings.tz_one_name, tz1name_tuple->value->cstring, MAX_TZ_NAME_LEN);
 		if(!strcmp(settings.tz_one_name,""))
-			strcpy(settings.tz_one_name, "TZ1"); // TODO use INIT_TZ1_NAME (and 2)
+			strcpy(settings.tz_one_name, INIT_TZ1_NAME);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found tz1 name: %s", settings.tz_one_name);
 		
 		settings.tz_one_offset = atoi(tz1offset_tuple->value->cstring);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found tz1 offset: %d", settings.tz_one_offset);
 		
-		strncpy(settings.tz_two_name, tz2name_tuple->value->cstring, 3);
+		strncpy(settings.tz_two_name, tz2name_tuple->value->cstring, MAX_TZ_NAME_LEN);
 		if(!strcmp(settings.tz_two_name,""))
-			strcpy(settings.tz_two_name, "TZ2");
+			strcpy(settings.tz_two_name, INIT_TZ2_NAME);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found tz2 name: %s", settings.tz_two_name);
 		
 		settings.tz_two_offset = atoi(tz2offset_tuple->value->cstring);
@@ -383,11 +383,11 @@ void handle_init(void) {
 	
 	//Avoid blank screen
 	if(!strcmp(settings.tz_one_name,""))
-			strcpy(settings.tz_one_name, "TZ1"); // TODO use INIT_TZ1_NAME (and 2)
+			strcpy(settings.tz_one_name, INIT_TZ1_NAME);
 	text_layer_set_text(tz_one_text_layer, settings.tz_one_name);
 	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Init load tz1 name %s", settings.tz_one_name);
 	if(!strcmp(settings.tz_two_name,""))
-			strcpy(settings.tz_two_name, "TZ2");
+			strcpy(settings.tz_two_name, INIT_TZ2_NAME);
 	text_layer_set_text(tz_two_text_layer, settings.tz_two_name);
 	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Init load tz2 name %s", settings.tz_two_name);
 	time_t now = time(NULL);
