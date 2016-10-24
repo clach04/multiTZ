@@ -11,14 +11,15 @@
 	
 #define INIT_TZ1_NAME "TZ1"
 #define INIT_TZ2_NAME "TZ2"
-#define INIT_LOCAL_OFFSET (0)
-#define INIT_TZ1_OFFSET (+1)
+#define INIT_LOCAL_OFFSET (0)  // FIXME with Firmware 3/SDK3 this is nolonger needed
+#define INIT_TZ1_OFFSET (+1)  // TODO document these are not DST aware
 #define INIT_TZ2_OFFSET (-1)
 		
 #define TOTAL_DATE_DIGITS 6
 static GBitmap *date_digits_images[TOTAL_DATE_DIGITS];
 static BitmapLayer *date_digits_layers[TOTAL_DATE_DIGITS];
 
+// FIXME use SDK4 generated keys
 enum {
 	CONFIG_LOCAL_OFFSET = 0x0,
 	CONFIG_TZ1_NAME = 0x1,
@@ -95,8 +96,8 @@ typedef struct persist {
 	int tz_one_offset;
 	char tz_two_name[4];
 	int tz_two_offset;
-	int local_offset;
-	int hourlyVibe;
+	int local_offset;  // FIXME with Firmware 3/SDK3 this is nolonger needed
+	int hourlyVibe;  // FIXME remove, not exposed via confid
 } __attribute__((__packed__)) persist;
 
 persist settings = {
@@ -105,14 +106,13 @@ persist settings = {
 	.tz_two_name = INIT_TZ2_NAME,
 	.tz_two_offset = INIT_TZ2_OFFSET,
 	.local_offset = INIT_LOCAL_OFFSET,
-	.hourlyVibe = 1
+	.hourlyVibe = 0  // FIXME remove, not exposed via confid
 };
 	
 Window *my_window;
 
 static GBitmap *background_image;
 static BitmapLayer *background_layer;
-// TODO: Handle 12/24 mode preference when it's exposed.
 static GBitmap *time_format_image;
 static BitmapLayer *time_format_layer;
 
@@ -152,10 +152,11 @@ static void update_display(struct tm *current_time) {
 	unsigned short display_hour = get_display_hour(current_time->tm_hour);
 	short tzOne_hour = current_time->tm_hour + (settings.tz_one_offset - settings.local_offset);
 	short tzTwo_hour = current_time->tm_hour + (settings.tz_two_offset - settings.local_offset);
-	/*
+	///*
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "update_display load local offset %d", settings.local_offset);
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "update_display load tz1 offset %d", settings.tz_one_offset);
-	APP_LOG(APP_LOG_LEVEL_DEBUG, "update_display load tz2 offset %d", settings.tz_two_offset);*/
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "update_display load tz2 offset %d", settings.tz_two_offset);
+    //*/
 
 	if (tzOne_hour >= 24)	tzOne_hour -= 24;
 	if (tzOne_hour <   0)	tzOne_hour += 24;
@@ -279,9 +280,11 @@ void in_received_handler(DictionaryIterator *received, void *context) {
 		settings.local_offset = atoi(local_offset_tuple->value->cstring);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found local offset: %d", settings.local_offset);
 		
+        // FIXME strncpy() needs EOS manually adding on max length
+        // FIXME remove static length
 		strncpy(settings.tz_one_name, tz1name_tuple->value->cstring, 3);
 		if(!strcmp(settings.tz_one_name,""))
-			strcpy(settings.tz_one_name, "TZ1");
+			strcpy(settings.tz_one_name, "TZ1"); // TODO use INIT_TZ1_NAME (and 2)
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found tz1 name: %s", settings.tz_one_name);
 		
 		settings.tz_one_offset = atoi(tz1offset_tuple->value->cstring);
@@ -360,7 +363,7 @@ void handle_init(void) {
 	text_layer_set_font(tz_two_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD));
 	
 	 // Create time and date layers
-  	GRect dummy_frame = { {0, 0}, {0, 0} };
+  	GRect dummy_frame = { {0, 0}, {0, 0} };  // TODO replace with GRectZero?
  	for (int i = 0; i < TOTAL_TIME_DIGITS; ++i) {
     	time_digits_layers[i] = bitmap_layer_create(dummy_frame);
     	layer_add_child(window_layer, bitmap_layer_get_layer(time_digits_layers[i]));
@@ -380,7 +383,7 @@ void handle_init(void) {
 	
 	//Avoid blank screen
 	if(!strcmp(settings.tz_one_name,""))
-			strcpy(settings.tz_one_name, "TZ1");
+			strcpy(settings.tz_one_name, "TZ1"); // TODO use INIT_TZ1_NAME (and 2)
 	text_layer_set_text(tz_one_text_layer, settings.tz_one_name);
 	//APP_LOG(APP_LOG_LEVEL_DEBUG, "Init load tz1 name %s", settings.tz_one_name);
 	if(!strcmp(settings.tz_two_name,""))
