@@ -26,14 +26,6 @@
 static GBitmap *date_digits_images[TOTAL_DATE_DIGITS];
 static BitmapLayer *date_digits_layers[TOTAL_DATE_DIGITS];
 
-// FIXME use SDK4 generated keys
-enum {
-	CONFIG_TZ1_NAME = 0x1,
-	CONFIG_TZ1_OFFSET = 0x2,
-	CONFIG_TZ2_NAME = 0x3,
-	CONFIG_TZ2_OFFSET = 0x4
-};
-
 
 const int BIG_DIGIT_IMAGE_RESOURCE_IDS[] = {
 	RESOURCE_ID_IMAGE_NUM_0,
@@ -284,10 +276,10 @@ static void savePersistentSettings() {
 
 void in_received_handler(DictionaryIterator *received, void *context) {
 	// incoming message received
-	Tuple *tz1name_tuple = dict_find(received, CONFIG_TZ1_NAME);
-	Tuple *tz1offset_tuple = dict_find(received, CONFIG_TZ1_OFFSET);
-	Tuple *tz2name_tuple = dict_find(received, CONFIG_TZ2_NAME);
-	Tuple *tz2offset_tuple = dict_find(received, CONFIG_TZ2_OFFSET);
+	Tuple *tz1name_tuple = dict_find(received, MESSAGE_KEY_TZ1_NAME);
+	Tuple *tz1offset_tuple = dict_find(received, MESSAGE_KEY_TZ1_UTC_OFFSET);
+	Tuple *tz2name_tuple = dict_find(received, MESSAGE_KEY_TZ2_NAME);
+	Tuple *tz2offset_tuple = dict_find(received, MESSAGE_KEY_TZ2_UTC_OFFSET);
 	
 	if(tz1name_tuple) {
 		strncpy(settings.tz_one_name, tz1name_tuple->value->cstring, MAX_TZ_NAME_LEN);
