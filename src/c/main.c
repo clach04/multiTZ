@@ -8,8 +8,6 @@
 	
 #define HOUR_VIBRATION_START 8
 #define HOUR_VIBRATION_END 23
-	
-#define INIT_LOCAL_OFFSET (0)  // FIXME with Firmware 3/SDK3 this is nolonger needed
 
 /*
 #define INIT_TZ1_NAME "GMT+01"
@@ -30,7 +28,6 @@ static BitmapLayer *date_digits_layers[TOTAL_DATE_DIGITS];
 
 // FIXME use SDK4 generated keys
 enum {
-	CONFIG_LOCAL_OFFSET = 0x0,
 	CONFIG_TZ1_NAME = 0x1,
 	CONFIG_TZ1_OFFSET = 0x2,
 	CONFIG_TZ2_NAME = 0x3,
@@ -109,7 +106,6 @@ typedef struct persist {
 	int tz_one_offset;
 	char tz_two_name[MAX_TZ_NAME_LEN+1];
 	int tz_two_offset;
-	int local_offset;  // FIXME with Firmware 3/SDK3 this is nolonger needed
 	int hourlyVibe;  // FIXME remove, not exposed via confid
 } __attribute__((__packed__)) persist;
 
@@ -118,7 +114,6 @@ persist settings = {
 	.tz_one_offset = INIT_TZ1_OFFSET,
 	.tz_two_name = INIT_TZ2_NAME,
 	.tz_two_offset = INIT_TZ2_OFFSET,
-	.local_offset = INIT_LOCAL_OFFSET,
 	.hourlyVibe = 0  // FIXME remove, not exposed via confid
 };
 	
@@ -171,7 +166,6 @@ static void update_display(struct tm *current_time) {
 	short tzOne_hour = utc_tm->tm_hour + settings.tz_one_offset;
 	short tzTwo_hour = utc_tm->tm_hour + settings.tz_two_offset;
 	///*
-	APP_LOG(APP_LOG_LEVEL_DEBUG, "update_display load local offset %d", settings.local_offset);
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "update_display load tz1 offset %d", settings.tz_one_offset);
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "update_display load tz2 offset %d", settings.tz_two_offset);
     //*/
@@ -290,18 +284,12 @@ static void savePersistentSettings() {
 
 void in_received_handler(DictionaryIterator *received, void *context) {
 	// incoming message received
-	Tuple *local_offset_tuple = dict_find(received, CONFIG_LOCAL_OFFSET);
 	Tuple *tz1name_tuple = dict_find(received, CONFIG_TZ1_NAME);
 	Tuple *tz1offset_tuple = dict_find(received, CONFIG_TZ1_OFFSET);
 	Tuple *tz2name_tuple = dict_find(received, CONFIG_TZ2_NAME);
 	Tuple *tz2offset_tuple = dict_find(received, CONFIG_TZ2_OFFSET);
 	
-	if(local_offset_tuple) {		
-		// Pull out data
-		settings.local_offset = atoi(local_offset_tuple->value->cstring);
-		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found local offset: %d", settings.local_offset);
-		
-        // FIXME remove static length
+	if(tz1name_tuple) {
 		strncpy(settings.tz_one_name, tz1name_tuple->value->cstring, MAX_TZ_NAME_LEN);
 		if(!strcmp(settings.tz_one_name,""))
 			strcpy(settings.tz_one_name, INIT_TZ1_NAME);

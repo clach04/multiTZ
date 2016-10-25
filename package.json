@@ -10,7 +10,6 @@
         "displayName": "MultiTZ",
         "enableMultiJS": true,
         "messageKeys": {
-            "Local_Timezone_UTC_Offset": 0,
             "Timezone_1_Name": 1,
             "Timezone_1_UTC_Offset": 2,
             "Timezone_2_Name": 3,
