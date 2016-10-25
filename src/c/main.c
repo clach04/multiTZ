@@ -181,10 +181,13 @@ static void update_display(struct tm *current_time) {
 		vibes_double_pulse();
 	}
 
+#ifdef VIB_AT_MIDNIGHT
+    // why vib at midnight? Some people need to sleep then
 	if(current_time->tm_min == 0 && current_time->tm_hour == 0)
 	{
 		vibes_double_pulse();
 	}
+#endif // VIB_AT_MIDNIGHT
 
 	//Minute
 	set_container_image(&time_digits_images[2], time_digits_layers[2], BIG_DIGIT_IMAGE_RESOURCE_IDS[current_time->tm_min/10], GPoint(80, TIME_Y));
