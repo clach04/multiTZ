@@ -9,10 +9,11 @@
 #define HOUR_VIBRATION_START 8
 #define HOUR_VIBRATION_END 23
 	
-#define INIT_TZ1_NAME "TZ1"
-#define INIT_TZ2_NAME "TZ2"
 #define INIT_LOCAL_OFFSET (0)  // FIXME with Firmware 3/SDK3 this is nolonger needed
-#define INIT_TZ1_OFFSET (+1)  // TODO document these are not DST aware
+
+#define INIT_TZ1_NAME "GMT+01"
+#define INIT_TZ1_OFFSET (+1)  // TODO document these are UTC (whole) hour offsets (not minutes) rather than names and thus not DST aware
+#define INIT_TZ2_NAME "GMT-01"
 #define INIT_TZ2_OFFSET (-1)
 		
 #define TOTAL_DATE_DIGITS 6
