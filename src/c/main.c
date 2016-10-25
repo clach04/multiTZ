@@ -281,38 +281,45 @@ void in_received_handler(DictionaryIterator *received, void *context) {
 	Tuple *tz2name_tuple = dict_find(received, MESSAGE_KEY_TZ2_NAME);
 	Tuple *tz2offset_tuple = dict_find(received, MESSAGE_KEY_TZ2_UTC_OFFSET);
 	
-	if(tz1name_tuple) {
+	if(tz1name_tuple)
+    {
 		strncpy(settings.tz_one_name, tz1name_tuple->value->cstring, MAX_TZ_NAME_LEN);
 		if(!strcmp(settings.tz_one_name,""))
 			strcpy(settings.tz_one_name, INIT_TZ1_NAME);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found tz1 name: %s", settings.tz_one_name);
+    }
 		
+	if(tz1offset_tuple)
+    {
 		settings.tz_one_offset = atoi(tz1offset_tuple->value->cstring);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found tz1 offset: %d", settings.tz_one_offset);
+    }
 		
+	if(tz2name_tuple)
+    {
 		strncpy(settings.tz_two_name, tz2name_tuple->value->cstring, MAX_TZ_NAME_LEN);
 		if(!strcmp(settings.tz_two_name,""))
 			strcpy(settings.tz_two_name, INIT_TZ2_NAME);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found tz2 name: %s", settings.tz_two_name);
+    }
 		
+	if(tz2offset_tuple)
+    {
 		settings.tz_two_offset = atoi(tz2offset_tuple->value->cstring);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found tz2 offset: %d", settings.tz_two_offset);
+    }
 		
-		// Update display
-		text_layer_set_text(tz_one_text_layer, settings.tz_one_name);
-		APP_LOG(APP_LOG_LEVEL_DEBUG, "Config_update load tz1 name %s", settings.tz_one_name);
-		text_layer_set_text(tz_two_text_layer, settings.tz_two_name);
-		APP_LOG(APP_LOG_LEVEL_DEBUG, "Config_update load tz2 name %s", settings.tz_two_name);
-		time_t now = time(NULL);
-		struct tm *tick_time = localtime(&now);
-		update_display(tick_time);
-		
-		// TODO: load info to persistent storage
-		savePersistentSettings();
-		
-	} else {
-		APP_LOG(APP_LOG_LEVEL_DEBUG, "Not Found local offset");
-	}
+    // Update display
+    text_layer_set_text(tz_one_text_layer, settings.tz_one_name);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Config_update load tz1 name %s", settings.tz_one_name);
+    text_layer_set_text(tz_two_text_layer, settings.tz_two_name);
+    APP_LOG(APP_LOG_LEVEL_DEBUG, "Config_update load tz2 name %s", settings.tz_two_name);
+    time_t now = time(NULL);
+    struct tm *tick_time = localtime(&now);
+    update_display(tick_time);
+
+    // TODO: load info to persistent storage
+    savePersistentSettings();
 }
 
 void handle_init(void) {
