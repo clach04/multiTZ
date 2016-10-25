@@ -11,10 +11,18 @@
 	
 #define INIT_LOCAL_OFFSET (0)  // FIXME with Firmware 3/SDK3 this is nolonger needed
 
+/*
 #define INIT_TZ1_NAME "GMT+01"
 #define INIT_TZ1_OFFSET (+1)  // TODO document these are UTC (whole) hour offsets (not minutes) rather than names and thus not DST aware
 #define INIT_TZ2_NAME "GMT-01"
 #define INIT_TZ2_OFFSET (-1)
+*/
+#define INIT_TZ1_NAME "GMT+01"  // BST for UK or CET for Western Europe
+#define INIT_TZ1_OFFSET (+1)  // TODO document these are UTC (whole) hour offsets (not minutes) rather than names and thus not DST aware
+//#define INIT_TZ2_NAME "GMT-08"  // PST
+//#define INIT_TZ2_OFFSET (-8)
+#define INIT_TZ2_NAME "GMT-07"  // PDT
+#define INIT_TZ2_OFFSET (-7)
 		
 #define TOTAL_DATE_DIGITS 6
 static GBitmap *date_digits_images[TOTAL_DATE_DIGITS];
@@ -153,10 +161,15 @@ static unsigned short get_display_hour(unsigned short hour) {
 unsigned short the_last_hour = 25;
 
 static void update_display(struct tm *current_time) {
-  
+    // With SDK3/Firmware 3
+    //      struct tm *current_time is local time
+    //      time_t time(NULL) is UTC time
+
+    time_t utc_time = time(NULL);
+    struct tm *utc_tm = gmtime(&utc_time);
 	unsigned short display_hour = get_display_hour(current_time->tm_hour);
-	short tzOne_hour = current_time->tm_hour + (settings.tz_one_offset - settings.local_offset);
-	short tzTwo_hour = current_time->tm_hour + (settings.tz_two_offset - settings.local_offset);
+	short tzOne_hour = utc_tm->tm_hour + settings.tz_one_offset;
+	short tzTwo_hour = utc_tm->tm_hour + settings.tz_two_offset;
 	///*
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "update_display load local offset %d", settings.local_offset);
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "update_display load tz1 offset %d", settings.tz_one_offset);
