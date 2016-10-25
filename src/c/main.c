@@ -91,7 +91,10 @@ static int valueRead, valueWritten;
 
 #define SETTINGS_KEY 77
 
-#define MAX_TZ_NAME_LEN 3
+#define MAX_TZ_NAME_LEN 6 // Long enough for "GMT-xx"
+#define TZ_NAME_WIDTH (148/2)  // FIXME this is (old) rect only, not round and PT2
+#define TZ_TIME_START_X TZ_NAME_WIDTH + 5
+
 typedef struct persist {
 	char tz_one_name[MAX_TZ_NAME_LEN+1];
 	int tz_one_offset;
@@ -196,25 +199,25 @@ static void update_display(struct tm *current_time) {
 	// More Timezones
 	if (tzOne_hour/10 != 0) {
 		layer_set_hidden(bitmap_layer_get_layer(tz_one_digits_layers[0]), false);
-		set_container_image(&tz_one_digits_images[0], tz_one_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[tzOne_hour/10], GPoint(71, TIMEZONE_ONE_Y));
+		set_container_image(&tz_one_digits_images[0], tz_one_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[tzOne_hour/10], GPoint(TZ_TIME_START_X, TIMEZONE_ONE_Y));
 	} else {
 		layer_set_hidden(bitmap_layer_get_layer(tz_one_digits_layers[0]), true);
 	}
-	set_container_image(&tz_one_digits_images[1], tz_one_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[tzOne_hour%10], GPoint(83, TIMEZONE_ONE_Y));
+	set_container_image(&tz_one_digits_images[1], tz_one_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[tzOne_hour%10], GPoint(TZ_TIME_START_X + 12, TIMEZONE_ONE_Y));
 	
-	set_container_image(&tz_one_digits_images[2], tz_one_digits_layers[2], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_min/10], GPoint(103, TIMEZONE_ONE_Y));
-	set_container_image(&tz_one_digits_images[3], tz_one_digits_layers[3], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_min%10], GPoint(115, TIMEZONE_ONE_Y));
-		
+	set_container_image(&tz_one_digits_images[2], tz_one_digits_layers[2], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_min/10], GPoint(TZ_TIME_START_X + 32, TIMEZONE_ONE_Y));
+	set_container_image(&tz_one_digits_images[3], tz_one_digits_layers[3], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_min%10], GPoint(TZ_TIME_START_X + 44, TIMEZONE_ONE_Y));
+
 	if (tzTwo_hour/10 != 0) {
 		layer_set_hidden(bitmap_layer_get_layer(tz_two_digits_layers[0]), false);
-		set_container_image(&tz_two_digits_images[0], tz_two_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[tzTwo_hour/10], GPoint(71, TIMEZONE_TWO_Y));
+		set_container_image(&tz_two_digits_images[0], tz_two_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[tzTwo_hour/10], GPoint(TZ_TIME_START_X, TIMEZONE_TWO_Y));
 	} else {
 		layer_set_hidden(bitmap_layer_get_layer(tz_two_digits_layers[0]), true);
 	}
-	set_container_image(&tz_two_digits_images[1], tz_two_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[tzTwo_hour%10], GPoint(83, TIMEZONE_TWO_Y));
+	set_container_image(&tz_two_digits_images[1], tz_two_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[tzTwo_hour%10], GPoint(TZ_TIME_START_X + 12, TIMEZONE_TWO_Y));
 	
-	set_container_image(&tz_two_digits_images[2], tz_two_digits_layers[2], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_min/10], GPoint(103, TIMEZONE_TWO_Y));
-	set_container_image(&tz_two_digits_images[3], tz_two_digits_layers[3], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_min%10], GPoint(115, TIMEZONE_TWO_Y));
+	set_container_image(&tz_two_digits_images[2], tz_two_digits_layers[2], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_min/10], GPoint(TZ_TIME_START_X + 32, TIMEZONE_TWO_Y));
+	set_container_image(&tz_two_digits_images[3], tz_two_digits_layers[3], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_min%10], GPoint(TZ_TIME_START_X + 44, TIMEZONE_TWO_Y));
 	
 	if (the_last_hour != display_hour){
 	  
@@ -352,14 +355,14 @@ void handle_init(void) {
 	text_layer_set_font(day_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_24_BOLD));
 	
 	// Create time zone 1 text layers
-    tz_one_text_layer = text_layer_create(GRect(15, 0, 55 /* width */, 30 /* height */));
+    tz_one_text_layer = text_layer_create(GRect(0, 0, TZ_NAME_WIDTH /* width */, 30 /* height */));
 	layer_add_child(window_layer, text_layer_get_layer(tz_one_text_layer));
 	text_layer_set_background_color(tz_one_text_layer, GColorClear);
 	text_layer_set_text_color(tz_one_text_layer, GColorWhite);
 	text_layer_set_font(tz_one_text_layer, fonts_get_system_font(FONT_KEY_GOTHIC_28_BOLD)); 
 	
 	// Create time zone 2 text layers
-    tz_two_text_layer = text_layer_create(GRect(15, 34, 55 /* width */, 30 /* height */));
+    tz_two_text_layer = text_layer_create(GRect(0, 34, TZ_NAME_WIDTH /* width */, 30 /* height */));
 	layer_add_child(window_layer, text_layer_get_layer(tz_two_text_layer));
 	text_layer_set_background_color(tz_two_text_layer, GColorClear);
 	text_layer_set_text_color(tz_two_text_layer, GColorWhite);
