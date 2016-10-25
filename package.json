@@ -1,7 +1,8 @@
 {
     "author": "victorzwl",
     "dependencies": {
-        "pebble-clay": "^1.0.3"
+        "pebble-clay": "^1.0.3",
+        "pebble-packet": "^1.3.2"
     },
     "keywords": [],
     "name": "multitz",

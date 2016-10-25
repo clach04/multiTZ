@@ -26,11 +26,14 @@ module.exports = [
             }
             },
             {
-                "type": "input",
+                "type": "slider",
                 "label": "TZ1 UTC offset",
                 "description": "UTC offset (whole hours only)",
                 "messageKey": "TZ1_UTC_OFFSET",
-                "defaultValue": "-1"
+                "defaultValue": -1,
+                "min": -11,
+                "max": +11,
+                "step": 1
             },
             {
                 "type": "input",

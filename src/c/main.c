@@ -1,4 +1,6 @@
-#include <pebble.h>
+//#include <pebble.h>
+
+#include <pebble-events/pebble-events.h>
 
 #define DATE_Y 83
 #define TIME_Y 108
@@ -277,7 +279,6 @@ static void savePersistentSettings() {
 void in_received_handler(DictionaryIterator *received, void *context) {
 	// incoming message received
 	Tuple *tz1name_tuple = dict_find(received, MESSAGE_KEY_TZ1_NAME);
-	Tuple *tz1offset_tuple = dict_find(received, MESSAGE_KEY_TZ1_UTC_OFFSET);
 	Tuple *tz2name_tuple = dict_find(received, MESSAGE_KEY_TZ2_NAME);
 	Tuple *tz2offset_tuple = dict_find(received, MESSAGE_KEY_TZ2_UTC_OFFSET);
 	
@@ -288,10 +289,10 @@ void in_received_handler(DictionaryIterator *received, void *context) {
 			strcpy(settings.tz_one_name, INIT_TZ1_NAME);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found tz1 name: %s", settings.tz_one_name);
     }
-		
-	if(tz1offset_tuple)
+
+    if(packet_contains_key(received, MESSAGE_KEY_TZ1_UTC_OFFSET))
     {
-		settings.tz_one_offset = atoi(tz1offset_tuple->value->cstring);
+		settings.tz_one_offset = packet_get_integer(received, MESSAGE_KEY_TZ1_UTC_OFFSET);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found tz1 offset: %d", settings.tz_one_offset);
     }
 		
