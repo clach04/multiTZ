@@ -153,6 +153,8 @@ static void update_display(struct tm *current_time) {
     // With SDK3/Firmware 3
     //      struct tm *current_time is local time
     //      time_t time(NULL) is UTC time
+    // FIXME above is true for non-APLITE platforms, but not for Aplite in CloudPebble Emulator.
+    // This does NOT appear to be documented
 
     time_t utc_time = time(NULL);
     struct tm *utc_tm = gmtime(&utc_time);
