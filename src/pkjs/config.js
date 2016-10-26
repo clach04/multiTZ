@@ -31,8 +31,8 @@ module.exports = [
                 "description": "UTC offset (whole hours only)",
                 "messageKey": "TZ1_UTC_OFFSET",
                 "defaultValue": -1,
-                "min": -11,
-                "max": +11,
+                "min": -12,
+                "max": +12,
                 "step": 1
             },
             {
