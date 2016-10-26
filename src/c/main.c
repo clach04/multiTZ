@@ -304,9 +304,9 @@ void in_received_handler(DictionaryIterator *received, void *context) {
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found tz2 name: %s", settings.tz_two_name);
     }
 		
-	if(tz2offset_tuple)
+    if(packet_contains_key(received, MESSAGE_KEY_TZ2_UTC_OFFSET))
     {
-		settings.tz_two_offset = atoi(tz2offset_tuple->value->cstring);
+		settings.tz_two_offset = packet_get_integer(received, MESSAGE_KEY_TZ2_UTC_OFFSET);
 		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found tz2 offset: %d", settings.tz_two_offset);
     }
 		
