@@ -13,7 +13,7 @@ module.exports = [
             },
             {
                 "type": "text",
-                "defaultValue": "NOTE note DST aware."
+                "defaultValue": "NOTE not DST aware."
             },
             {
                 "type": "input",
