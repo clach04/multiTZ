@@ -91,7 +91,7 @@ const char *DAY_NAME_ENGLISH[] = {
 	
 static int valueRead, valueWritten;
 
-#define SETTINGS_KEY 77
+#define MESSAGE_KEY_PEBBLE_SETTINGS 77
 
 #define MAX_TZ_NAME_LEN 6 // Long enough for "GMT-xx"
 #define TZ_NAME_WIDTH (148/2)  // FIXME this is (old) rect only, not round and PT2
@@ -291,11 +291,11 @@ static void handle_minute_tick(struct tm *tick_time, TimeUnits units_changed) {
 }
 
 static void loadPersistentSettings() {	
-	valueRead = persist_read_data(SETTINGS_KEY, &settings, sizeof(settings));
+	valueRead = persist_read_data(MESSAGE_KEY_PEBBLE_SETTINGS, &settings, sizeof(settings));
 }
 
 static void savePersistentSettings() {
-	valueWritten = persist_write_data(SETTINGS_KEY, &settings, sizeof(settings));
+	valueWritten = persist_write_data(MESSAGE_KEY_PEBBLE_SETTINGS, &settings, sizeof(settings));
 }
 
 void in_received_handler(DictionaryIterator *received, void *context) {

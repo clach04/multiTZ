@@ -17,7 +17,8 @@
             "TZ1_UTC_OFFSET",
             "TZ2_NAME",
             "TZ2_UTC_OFFSET",
-            "LOCAL_UTC_OFFSET_MINS"
+            "LOCAL_UTC_OFFSET_MINS",
+            "PEBBLE_SETTINGS"
         ],
         "projectType": "native",
         "resources": {
