@@ -17,12 +17,14 @@
 #define INIT_TZ2_NAME "GMT-01"
 #define INIT_TZ2_OFFSET (-1)
 */
-#define INIT_TZ1_NAME "GMT+01"  // BST for UK or CET for Western Europe
-#define INIT_TZ1_OFFSET (+1)  // TODO document these are UTC (whole) hour offsets (not minutes) rather than names and thus not DST aware
-//#define INIT_TZ2_NAME "GMT-08"  // PST
-//#define INIT_TZ2_OFFSET (-8)
-#define INIT_TZ2_NAME "GMT-07"  // PDT
-#define INIT_TZ2_OFFSET (-7)
+//#define INIT_TZ1_NAME "GMT+01"  // BST for UK or CET for Western Europe
+//#define INIT_TZ1_OFFSET (+1)  // TODO document these are UTC (whole) hour offsets (not minutes) rather than names and thus not DST aware
+#define INIT_TZ1_NAME "GMT+00"  // Winter time for UK or CET for Western Europe
+#define INIT_TZ1_OFFSET (0)  // TODO document these are UTC (whole) hour offsets (not minutes) rather than names and thus not DST aware
+#define INIT_TZ2_NAME "GMT-08"  // PST
+#define INIT_TZ2_OFFSET (-8)
+//#define INIT_TZ2_NAME "GMT-07"  // PDT
+//#define INIT_TZ2_OFFSET (-7)
 		
 #define TOTAL_DATE_DIGITS 6
 static GBitmap *date_digits_images[TOTAL_DATE_DIGITS];
@@ -100,6 +102,10 @@ typedef struct persist {
 	int tz_one_offset;
 	char tz_two_name[MAX_TZ_NAME_LEN+1];
 	int tz_two_offset;
+#ifdef PBL_PLATFORM_APLITE
+    // Aplite times are all base on local time
+    int local_offset_in_hours;
+#endif  // PBL_PLATFORM_APLITE
 	int hourlyVibe;  // FIXME remove, not exposed via confid
 } __attribute__((__packed__)) persist;
 
@@ -108,6 +114,9 @@ persist settings = {
 	.tz_one_offset = INIT_TZ1_OFFSET,
 	.tz_two_name = INIT_TZ2_NAME,
 	.tz_two_offset = INIT_TZ2_OFFSET,
+#ifdef PBL_PLATFORM_APLITE
+    .local_offset_in_hours = 0,
+#endif  // PBL_PLATFORM_APLITE
 	.hourlyVibe = 0  // FIXME remove, not exposed via confid
 };
 	
@@ -159,9 +168,20 @@ static void update_display(struct tm *current_time) {
     time_t utc_time = time(NULL);
     struct tm *utc_tm = gmtime(&utc_time);
 	unsigned short display_hour = get_display_hour(current_time->tm_hour);
+#ifdef PBL_PLATFORM_APLITE
+    // current_time and utc_tm are local time on Aplite
+	short tzOne_hour = utc_tm->tm_hour + (settings.tz_one_offset + settings.local_offset_in_hours);
+	short tzTwo_hour = utc_tm->tm_hour + (settings.tz_two_offset + settings.local_offset_in_hours);
+#else  // !PBL_PLATFORM_APLITE
 	short tzOne_hour = utc_tm->tm_hour + settings.tz_one_offset;
 	short tzTwo_hour = utc_tm->tm_hour + settings.tz_two_offset;
+#endif  // !PBL_PLATFORM_APLITE
 	///*
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "utc_tm->tm_hour %d", utc_tm->tm_hour);
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "current_time->tm_hour %d", current_time->tm_hour);
+#ifdef PBL_PLATFORM_APLITE
+	APP_LOG(APP_LOG_LEVEL_DEBUG, "update_display load local offset %d", settings.local_offset_in_hours);
+#endif  // !PBL_PLATFORM_APLITE
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "update_display load tz1 offset %d", settings.tz_one_offset);
 	APP_LOG(APP_LOG_LEVEL_DEBUG, "update_display load tz2 offset %d", settings.tz_two_offset);
     //*/
@@ -280,7 +300,16 @@ static void savePersistentSettings() {
 
 void in_received_handler(DictionaryIterator *received, void *context) {
 	// incoming message received
-	
+
+#ifdef PBL_PLATFORM_APLITE
+    if(packet_contains_key(received, MESSAGE_KEY_LOCAL_UTC_OFFSET_MINS))
+    {
+        // NOTE this is ONLY needed for Aplite
+		settings.local_offset_in_hours = packet_get_integer(received, MESSAGE_KEY_LOCAL_UTC_OFFSET_MINS) / 60;  // only integer (complete) hours supported
+		APP_LOG(APP_LOG_LEVEL_DEBUG, "Found local offset: %d", settings.local_offset_in_hours);
+    }
+#endif  // PBL_PLATFORM_APLITE
+
     if(packet_contains_key(received, MESSAGE_KEY_TZ1_NAME))
     {
 		strncpy(settings.tz_one_name, packet_get_string(received, MESSAGE_KEY_TZ1_NAME), MAX_TZ_NAME_LEN);
