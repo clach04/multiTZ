@@ -7,7 +7,9 @@
 	
 #define TIMEZONE_ONE_Y 11
 #define TIMEZONE_TWO_Y 45
-	
+
+#define DATENUM_WIDTH 13
+
 #define HOUR_VIBRATION_START 8
 #define HOUR_VIBRATION_END 23
 
@@ -255,7 +257,7 @@ static void update_display(struct tm *current_time) {
 	} else {
 		layer_set_hidden(bitmap_layer_get_layer(date_digits_layers[0]), true);
 	}
-	set_container_image(&date_digits_images[1], date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday%10], GPoint(day_month_x[0] + 13, DATE_Y));
+	set_container_image(&date_digits_images[1], date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday%10], GPoint(day_month_x[0] + DATENUM_WIDTH, DATE_Y));
 
 	// Month
 	if ((current_time->tm_mon+1)/10 != 0) {
@@ -264,11 +266,11 @@ static void update_display(struct tm *current_time) {
 	} else {
 		layer_set_hidden(bitmap_layer_get_layer(date_digits_layers[2]), true);
 	}
-	set_container_image(&date_digits_images[3], date_digits_layers[3], DATENUM_IMAGE_RESOURCE_IDS[(current_time->tm_mon+1)%10], GPoint(day_month_x[1] + 13, DATE_Y));
+	set_container_image(&date_digits_images[3], date_digits_layers[3], DATENUM_IMAGE_RESOURCE_IDS[(current_time->tm_mon+1)%10], GPoint(day_month_x[1] + DATENUM_WIDTH, DATE_Y));
 
 	// Year
 	set_container_image(&date_digits_images[4], date_digits_layers[4], DATENUM_IMAGE_RESOURCE_IDS[((1900+current_time->tm_year)%1000)/10], GPoint(day_month_x[2], DATE_Y));
-	set_container_image(&date_digits_images[5], date_digits_layers[5], DATENUM_IMAGE_RESOURCE_IDS[((1900+current_time->tm_year)%1000)%10], GPoint(day_month_x[2] + 13, DATE_Y));
+	set_container_image(&date_digits_images[5], date_digits_layers[5], DATENUM_IMAGE_RESOURCE_IDS[((1900+current_time->tm_year)%1000)%10], GPoint(day_month_x[2] + DATENUM_WIDTH, DATE_Y));
 
 	// Time format
 	if (!clock_is_24h_style()) {
