@@ -5,12 +5,12 @@
         "pebble-packet": "^1.3.2"
     },
     "keywords": [],
-    "name": "multitz",
+    "name": "multitz_clay",
     "pebble": {
         "capabilities": [
             "configurable"
         ],
-        "displayName": "MultiTZ",
+        "displayName": "MultiTZ Clay",
         "enableMultiJS": true,
         "messageKeys": [
             "TZ1_NAME",
@@ -165,7 +165,7 @@
             "basalt",
             "diorite"
         ],
-        "uuid": "7b47ee89-870f-4d65-868c-0a0bc94e05f8",
+        "uuid": "ddca8e4a-59a1-4b8f-8543-372e73ce54ae",
         "watchapp": {
             "watchface": true
         }

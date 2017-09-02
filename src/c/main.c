@@ -1,3 +1,4 @@
+/// WIP iso date format....
 #include <pebble.h>
 
 #include <pebble-packet/pebble-packet.h>
@@ -74,8 +75,8 @@ const int DATENUM_IMAGE_RESOURCE_IDS[] = {
 #define CONFIG_H
 
 const int day_month_x[] = {
-	87,
 	55,
+	87,
 	115
 };
 
@@ -253,11 +254,11 @@ static void update_display(struct tm *current_time) {
 	// Day
 	if (current_time->tm_mday/10 != 0) {
 		layer_set_hidden(bitmap_layer_get_layer(date_digits_layers[0]), false);
-		set_container_image(&date_digits_images[0], date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday/10], GPoint(day_month_x[0], DATE_Y));
+		set_container_image(&date_digits_images[0], date_digits_layers[0], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday/10], GPoint(day_month_x[2], DATE_Y));
 	} else {
 		layer_set_hidden(bitmap_layer_get_layer(date_digits_layers[0]), true);
 	}
-	set_container_image(&date_digits_images[1], date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday%10], GPoint(day_month_x[0] + DATENUM_WIDTH, DATE_Y));
+	set_container_image(&date_digits_images[1], date_digits_layers[1], DATENUM_IMAGE_RESOURCE_IDS[current_time->tm_mday%10], GPoint(day_month_x[2] + DATENUM_WIDTH, DATE_Y));
 
 	// Month
 	if ((current_time->tm_mon+1)/10 != 0) {
@@ -269,8 +270,8 @@ static void update_display(struct tm *current_time) {
 	set_container_image(&date_digits_images[3], date_digits_layers[3], DATENUM_IMAGE_RESOURCE_IDS[(current_time->tm_mon+1)%10], GPoint(day_month_x[1] + DATENUM_WIDTH, DATE_Y));
 
 	// Year
-	set_container_image(&date_digits_images[4], date_digits_layers[4], DATENUM_IMAGE_RESOURCE_IDS[((1900+current_time->tm_year)%1000)/10], GPoint(day_month_x[2], DATE_Y));
-	set_container_image(&date_digits_images[5], date_digits_layers[5], DATENUM_IMAGE_RESOURCE_IDS[((1900+current_time->tm_year)%1000)%10], GPoint(day_month_x[2] + DATENUM_WIDTH, DATE_Y));
+	set_container_image(&date_digits_images[4], date_digits_layers[4], DATENUM_IMAGE_RESOURCE_IDS[((1900+current_time->tm_year)%1000)/10], GPoint(day_month_x[0], DATE_Y));
+	set_container_image(&date_digits_images[5], date_digits_layers[5], DATENUM_IMAGE_RESOURCE_IDS[((1900+current_time->tm_year)%1000)%10], GPoint(day_month_x[0] + DATENUM_WIDTH, DATE_Y));
 
 	// Time format
 	if (!clock_is_24h_style()) {
